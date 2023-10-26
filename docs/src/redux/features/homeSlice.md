@@ -1,5 +1,3 @@
-Certainly, here's a detailed Markdown (MD) file for the `homeSlice.js` file:
-
 # `homeSlice.js` - Redux Slice Documentation
 
 This document provides an overview and detailed documentation for the `homeSlice` in your Redux setup.
