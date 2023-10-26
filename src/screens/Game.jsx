@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,18 +7,36 @@ import {
   FlatList,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
+
+// Custom component imports
 import Colors from '../utils/Colors';
 import Heading from '../components/Heading';
 import Button from '../components/Button';
-import {horizontalScale, moderateScale, verticalScale} from '../utils/Metrices';
-import {useNavigation} from '@react-navigation/native';
-import {useSelector} from 'react-redux';
 
+// Utility function imports
+import {
+  horizontalScale,
+  moderateScale,
+  verticalScale,
+} from '../utils/Metrices';
+
+// Redux imports
+import { useNavigation } from '@react-navigation/native';
+import { useSelector } from 'react-redux';
+
+/**
+ * Game component handles the game interface.
+ * @returns {JSX.Element} The rendered Game component.
+ */
 const Game = () => {
   const navigation = useNavigation();
   const wordRedux = useSelector(state => state.wordSlice.selected);
-  
+
+  /**
+   * Shuffles the letters of a word.
+   * @param {string} word - The word to shuffle.
+   * @returns {string[]} The shuffled word as an array.
+   */
   const shuffleWord = word => {
     const wordArray = word.split('');
 
@@ -32,21 +51,26 @@ const Game = () => {
 
   const [letters, setLetters] = useState(shuffleWord(wordRedux.word));
   const [word, setWord] = useState(
-    Array.from({length: wordRedux.word.length}, () => ''),
+    Array.from({ length: wordRedux.word.length }, () => '')
   );
-  const [letterIndices, setletterIndices] = useState(
-    Array.from({length: wordRedux.word.length}, () => -1),
+  const [letterIndices, setLetterIndices] = useState(
+    Array.from({ length: wordRedux.word.length }, () => -1)
   );
 
+  /**
+   * Pushes a string into an empty position in the word.
+   * @param {string} str - The string to push.
+   * @param {number} letterIndex - The index of the letter.
+   * @returns {boolean} `true` if the string was pushed successfully, `false` if no empty position is available.
+   */
   const pushStringIntoEmptyPosition = (str, letterIndex) => {
     const index = word.indexOf('');
     if (index !== -1) {
       word[index] = str;
       setWord(old => [...word]);
 
-      // const letterIndex = letters.indexOf(str);
       letterIndices[index] = letterIndex;
-      setletterIndices(old => [...letterIndices]);
+      setLetterIndices(old => [...letterIndices]);
 
       if (letterIndex !== -1) {
         setLetters(letters => {
@@ -62,71 +86,72 @@ const Game = () => {
     }
   };
 
+  /**
+   * Removes the last added letter and puts it back into the letters array in the correct position.
+   */
   const removeLastAdded = () => {
-    //to remove the last letter and put it back to letters array in correct position
     let last = -1;
     for (let i = word.length - 1; i >= 0; i--) {
-      if (word[i] != '') {
+      if (word[i] !== '') {
         last = i;
         break;
       }
     }
-    if (last != -1) {
+    if (last !== -1) {
       const letter = word[last];
       const position = letterIndices[last];
       letters[position] = letter;
       setLetters(old => [...letters]);
 
-      word[last] = "";
+      word[last] = '';
       letterIndices[last] = -1;
       setWord(old => [...word]);
-      setletterIndices(old => [...letterIndices]);
-      
+      setLetterIndices(old => [...letterIndices]);
     }
   };
 
+  /**
+   * Calculates the point based on word length and complexity.
+   * @returns {number} The total points for the word.
+   */
   const getPoint = () => {
-    // Define a base point value
     let basePoints = 10;
-
-    // Calculate bonus points based on word length
     let lengthBonus = Math.floor((word.length - 3) * 2);
 
-    // Define a mapping of rare letters and their associated bonus points.
-    const rareLetters = { 'q': 5, 'x': 5, 'z': 5, 'p':1, 's':1, 'y':1 };
-
-    // Initialize complexity points.
+    const rareLetters = { q: 5, x: 5, z: 5, p: 1, s: 1, y: 1 };
     let complexityPoints = 0;
 
-    // Award points based on word length.
     complexityPoints += lengthBonus;
 
-    // Award bonus points for rare letters.
     for (let i = 0; i < word.length; i++) {
       const letter = word[i].toLowerCase();
       if (rareLetters[letter]) {
         complexityPoints += rareLetters[letter];
       }
     }
-    // Calculate the total points
+
     let totalPoints = basePoints + lengthBonus + complexityPoints;
-
     return totalPoints;
-  }
-
-  const evaluate = () => {
-    if (word.join("") == wordRedux.word)
-    {
-      const point = getPoint();
-      navigation.navigate('Result', {data: 1,points:point});
-    }
-    else
-    {
-      navigation.navigate('Result', {data: 0,points:0});
-    }
-    
   };
 
+  /**
+   * Evaluates the word and navigates to the result screen.
+   */
+  const evaluate = () => {
+    if (word.join('') === wordRedux.word) {
+      const point = getPoint();
+      navigation.navigate('Result', { data: 1, points: point });
+    } else {
+      navigation.navigate('Result', { data: 0, points: 0 });
+    }
+  };
+
+  /**
+   * Renders a word item.
+   * @param {string} item - The letter.
+   * @param {number} index - The index of the letter.
+   * @returns {JSX.Element} The rendered word item.
+   */
   const renderWord = (item, index) => {
     return (
       <TouchableOpacity style={styles.wordItem}>
@@ -135,22 +160,28 @@ const Game = () => {
     );
   };
 
+  /**
+   * Renders a letter item.
+   * @param {string} item - The letter.
+   * @param {number} index - The index of the letter.
+   * @returns {JSX.Element} The rendered letter item.
+   */
   const renderLetters = (item, index) => {
     return (
       <TouchableOpacity
-        onPress={() => pushStringIntoEmptyPosition(item,index)}
+        onPress={() => pushStringIntoEmptyPosition(item, index)}
         style={styles.letters}>
-        <Text style={{color: Colors.darkPurple}}>{item.toUpperCase()}</Text>
+        <Text style={{ color: Colors.darkPurple }}>{item.toUpperCase()}</Text>
       </TouchableOpacity>
     );
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <Heading />
       <View style={styles.centerView}>
         <View style={styles.wordView}>{word.map(renderWord)}</View>
-        <TouchableOpacity
-          onPress={removeLastAdded}>
+        <TouchableOpacity onPress={removeLastAdded}>
           <Text style={styles.deleteText}>{'<- DELETE'}</Text>
         </TouchableOpacity>
         <Text style={styles.hintView}>{`${'Hint: '}${wordRedux.hint}`}</Text>
@@ -158,7 +189,7 @@ const Game = () => {
       </View>
       <Button
         onPress={() => {
-          navigation.navigate('Result', {data: 0});
+          navigation.navigate('Result', { data: 0 });
         }}>
         SKIP
       </Button>
@@ -171,8 +202,6 @@ const Game = () => {
     </SafeAreaView>
   );
 };
-
-export default Game;
 
 const styles = StyleSheet.create({
   container: {
@@ -244,3 +273,5 @@ const styles = StyleSheet.create({
     padding: moderateScale(10),
   },
 });
+
+export default Game;

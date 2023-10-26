@@ -1,7 +1,7 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  selected: null,
+  selected: null,  // Initially, no word is selected.
   wordLists: [
     {
       id: 1,
@@ -42,8 +42,8 @@ export const wordSlice = createSlice({
   reducers: {
     updateSelectedWord: (state, action) => {
       // Update only the fields specified in the action payload
+      const { categoryId } = action.payload;
 
-      const {categoryId} = action.payload;
       // Find the category based on categoryId
       const category = state.wordLists.find(cat => cat.id === categoryId);
 
@@ -77,9 +77,10 @@ export const wordSlice = createSlice({
       }
     },
     resetSelectedWord: (state, action) => {
-      state.selected = null;
+      state.selected = null;  // Reset the selected word to null.
     },
   },
 });
-export const {updateSelectedWord, resetSelectedWord} = wordSlice.actions;
+
+export const { updateSelectedWord, resetSelectedWord } = wordSlice.actions;
 export default wordSlice.reducer;

@@ -1,7 +1,7 @@
 
 import DeviceInfo from 'react-native-device-info';
 const live="";
-const local="https://crm.codingincloud.com/v1/";
+const local="";
 const appEnv=false;
 export default{
     BASEURL:appEnv ? `${live}api/` : `${local}`,

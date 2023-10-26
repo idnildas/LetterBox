@@ -1,5 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+/**
+ * Description
+ * @param {any} params
+ * @returns {any}
+ */
 async function asyncstorageMultiSet(params){
     try{
         await AsyncStorage.multiSet(params);
@@ -10,6 +15,11 @@ async function asyncstorageMultiSet(params){
         return e;
     }
 }
+/**
+ * Description
+ * @param {any} params
+ * @returns {any}
+ */
 async function asyncstorageMultiGet(params){
     try{
         const res=await AsyncStorage.multiGet(params);
@@ -20,6 +30,11 @@ async function asyncstorageMultiGet(params){
         return e;
     }
 }
+/**
+ * Description
+ * @param {any} keys
+ * @returns {any}
+ */
 async function clearAsyncstorageData(keys){
     try{
         await AsyncStorage.multiRemove(keys);

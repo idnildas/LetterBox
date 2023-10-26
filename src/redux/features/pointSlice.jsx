@@ -1,7 +1,15 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import assets from '../../assets';
 import { asyncstorageMultiSet } from '../../utils/AsyncstorageFunction';
 
+/**
+ * A helper function to update the leaderboard based on a user's new points.
+ *
+ * @param {Array} leaderboard - The array of leaderboard objects.
+ * @param {string} userId - The user's ID.
+ * @param {number} newPoints - The new points to set.
+ * @returns {Array} - The updated leaderboard array.
+ */
 const updateLeaderboard = (leaderboard, userId, newPoints) => {
     // Find the user's entry in the leaderboard array
     const userIndex = leaderboard.findIndex(user => user.userId === userId);
@@ -72,18 +80,17 @@ export const pointSlice = createSlice({
   initialState,
   reducers: {
     addUserPoint: (state, action) => {
-      // Update only the fields specified in the action payload
-          state.userPoints += action?.payload ?? 0;
-          asyncstorageMultiSet([["points", JSON.stringify(state.userPoints)]]);
-          state.leaderList = updateLeaderboard(state.leaderList, 'user001', state.userPoints);
-      },
-      updateUserPoint: (state, action) => {
-      // Update only the fields specified in the action payload
-          state.userPoints = action?.payload ?? state.userPoints;
-          state.leaderList = updateLeaderboard(state.leaderList, 'user001', state.userPoints);
+      // Update the user's points and leaderboard
+      state.userPoints += action?.payload ?? 0;
+      asyncstorageMultiSet([["points", JSON.stringify(state.userPoints)]]);
+      state.leaderList = updateLeaderboard(state.leaderList, 'user001', state.userPoints);
     },
-
+    updateUserPoint: (state, action) => {
+      // Update the user's points and leaderboard
+      state.userPoints = action?.payload ?? state.userPoints;
+      state.leaderList = updateLeaderboard(state.leaderList, 'user001', state.userPoints);
+    },
   },
 });
-export const {addUserPoint, updateUserPoint} = pointSlice.actions;
+export const { addUserPoint, updateUserPoint } = pointSlice.actions;
 export default pointSlice.reducer;

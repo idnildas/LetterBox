@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -7,26 +8,41 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import React, {useEffect, useState} from 'react';
-import Heading from '../components/Heading';
-import Colors from '../utils/Colors';
-import {horizontalScale, moderateScale, verticalScale} from '../utils/Metrices';
-import Button from '../components/Button';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch, useSelector} from 'react-redux';
-import {updateSelectedWord} from '../redux/features/wordSlice';
 
+// Custom component imports
+import Heading from '../components/Heading';
+import Button from '../components/Button';
+
+// Utility function imports
+import Colors from '../utils/Colors';
+import { horizontalScale, moderateScale, verticalScale } from '../utils/Metrices';
+
+// Redux imports
+import { useNavigation } from '@react-navigation/native';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateSelectedWord } from '../redux/features/wordSlice';
+
+/**
+ * Home component displays categories for the game.
+ * @returns {JSX.Element}
+ */
 const Home = () => {
   const navigation = useNavigation();
   const dispatch = useDispatch();
   const homeRedux = useSelector(state => state.homeSlice);
 
-  const renderCrds = ({item, index}) => {
+  /**
+   * Renders the category cards.
+   * @param {object} item - The category data.
+   * @param {number} index - The index of the category.
+   * @returns {JSX.Element}
+   */
+  const renderCards = ({ item }) => {
     return (
       <TouchableOpacity
         onPress={() => {
-          dispatch(updateSelectedWord({categoryId: item.id}));
-          navigation.navigate('Game', {data: item});
+          dispatch(updateSelectedWord({ categoryId: item.id }));
+          navigation.navigate('Game', { data: item });
         }}
         style={styles.card}>
         <Text style={styles.optionText}>{(item.name ?? '').toUpperCase()}</Text>
@@ -46,7 +62,7 @@ const Home = () => {
       <Heading />
       <View style={styles.centerView}>
         <Text style={styles.subText}>{' ~ make words of ~ '}</Text>
-        <FlatList data={homeRedux.list} renderItem={renderCrds} />
+        <FlatList data={homeRedux.list} renderItem={renderCards} />
       </View>
       <Button
         onPress={() => {
@@ -57,8 +73,6 @@ const Home = () => {
     </SafeAreaView>
   );
 };
-
-export default Home;
 
 const styles = StyleSheet.create({
   centerView: {
@@ -94,3 +108,5 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
+
+export default Home;

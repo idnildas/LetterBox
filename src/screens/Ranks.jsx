@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,23 +7,35 @@ import {
   Image,
   FlatList,
 } from 'react-native';
-import React, {useState} from 'react';
+
+// Custom component imports
 import Colors from '../utils/Colors';
 import assets from '../assets';
 import BigText from '../components/BigText';
 import Button from '../components/Button';
-import {horizontalScale, moderateScale, verticalScale} from '../utils/Metrices';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import { horizontalScale, moderateScale, verticalScale } from '../utils/Metrices';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import Heading from '../components/Heading';
-import moment from 'moment';
+
+// Redux imports
 import { useSelector } from 'react-redux';
 
+/**
+ * Ranks component displays the leaderboards.
+ * @returns {JSX.Element} The rendered Ranks component.
+ */
 const Ranks = () => {
   const navigation = useNavigation();
-  const pointRedux = useSelector(state => state.pointSlice)
+  const pointRedux = useSelector(state => state.pointSlice);
   const [leaders, setLeaders] = useState(pointRedux.leaderList);
 
-  const renderTupple = ({item, index}) => {
+  /**
+   * Renders a leaderboard tuple.
+   * @param {Object} item - The leaderboard item.
+   * @param {number} index - The index of the item.
+   * @returns {JSX.Element} The rendered leaderboard item.
+   */
+  const renderTupple = ({ item, index }) => {
     return (
       <View style={styles.rankCard}>
         <Text style={styles.itemText}>{item.rank}</Text>
@@ -31,11 +44,14 @@ const Ranks = () => {
       </View>
     );
   };
+
   return (
     <SafeAreaView style={styles.container}>
       <Heading navType={'back'} />
       <View style={styles.centerView}>
-        {renderTupple({item:{rank:"Rank", username:"Player", totalPoints:"Points"}})}
+        {renderTupple({
+          item: { rank: "Rank", username: "Player", totalPoints: "Points" }
+        })}
         <FlatList data={leaders} renderItem={renderTupple} style={styles.listStyle} />
       </View>
     </SafeAreaView>

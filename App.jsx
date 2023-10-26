@@ -21,43 +21,47 @@ import { asyncstorageMultiGet } from './src/utils/AsyncstorageFunction';
 import { updateUserPoint } from './src/redux/features/pointSlice';
 import { useDispatch } from 'react-redux';
 
+/**
+ * The main component for the entire app.
+ *
+ * @returns {JSX.Element} The rendered app.
+ */
 const App = () => {
   const [isSplash, setSplash] = useState(true);
   const dispatch = useDispatch();
+
   useEffect(() => {
     getAsyncData();
-
   }, []);
 
-  const getAsyncData = async() => {
+  /**
+   * Fetches async data from storage and updates the Redux store.
+   */
+  const getAsyncData = async () => {
     await asyncstorageMultiGet(["points"])
       .then(response => {
-        console.log("points fetched: ", response[0][1]);
-        dispatch(updateUserPoint(JSON.parse(response[0][1])))
+        console.log("Points fetched: ", response[0][1]);
+        dispatch(updateUserPoint(JSON.parse(response[0][1])));
       });
-    
+
     setTimeout(() => {
-      setSplash(false)
+      setSplash(false);
     }, 1000);
   }
-  
-  if (isSplash)
-  {
+
+  if (isSplash) {
     return (
-      <View style={{flex:1,backgroundColor:Colors.purple,justifyContent:"center",alignItems:"center"}}>
+      <View style={{ flex: 1, backgroundColor: Colors.purple, justifyContent: "center", alignItems: "center" }}>
         <StatusBar backgroundColor={"transparent"} translucent />
-        
-        <LottieView source={assets.splashLottie} autoPlay loop={false} style={{width:horizontalScale(428),height:verticalScale(350)}} />
+        <LottieView source={assets.splashLottie} autoPlay loop={false} style={{ width: horizontalScale(428), height: verticalScale(350) }} />
       </View>
     )
   }
-  else
-  {
+  else {
     return (
-          <Nav />
+      <Nav />
     )
   }
-  
 }
 
 export default App;
